@@ -3,7 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.27004.2010
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "lkong", "lkong.csproj", "{55537832-D48F-4C07-A696-50B0F06674E0}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "lkong", "lkong\lkong.csproj", "{55537832-D48F-4C07-A696-50B0F06674E0}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "lkong.net", "lkong.net\lkong.net.csproj", "{5E0DB72B-F08B-4376-B755-D0B4FFDE4B0E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +17,10 @@ Global
 		{55537832-D48F-4C07-A696-50B0F06674E0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{55537832-D48F-4C07-A696-50B0F06674E0}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{55537832-D48F-4C07-A696-50B0F06674E0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5E0DB72B-F08B-4376-B755-D0B4FFDE4B0E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5E0DB72B-F08B-4376-B755-D0B4FFDE4B0E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5E0DB72B-F08B-4376-B755-D0B4FFDE4B0E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5E0DB72B-F08B-4376-B755-D0B4FFDE4B0E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
