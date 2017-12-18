@@ -3,10 +3,13 @@ using HtmlAgilityPack;
 using System;
 using System.Linq;
 using System.Collections.Concurrent;
+using System.Collections;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace lkong.bookrecommandread
 {
-    public class ThreeRiverColletion
+    public class ThreeRiverColletion : IEnumerable<KeyValuePair<DateTime, ThreeRiverThread>>
     {
         string ranklisturl = "http://www.lkong.net/forum.php?mod=forumdisplay&fid=60&filter=typeid&typeid=620";
 
@@ -18,9 +21,7 @@ namespace lkong.bookrecommandread
             "试毒"
         };
 
-        private Dictionary<DateTime, ThreeRiverThread> _threeRiverThreads = new Dictionary<DateTime, ThreeRiverThread>();
-
-        public Dictionary<DateTime, ThreeRiverThread> ThreeRiverThreads => _threeRiverThreads;
+        private ConcurrentQueue<KeyValuePair<DateTime, ThreeRiverThread>> _threeRiverThreads = new ConcurrentQueue<KeyValuePair<DateTime, ThreeRiverThread>>();
 
         public ThreeRiverColletion(CreditCookie cookie = null)
             : this(DateTime.MinValue, cookie)
@@ -119,19 +120,37 @@ namespace lkong.bookrecommandread
                 thread_lists.Remove(key);
         }
 
+        Task _group_task = null;
+
         void GroupThreadList(CreditCookie cookie)
         {
-            var bag = new ConcurrentBag<ThreeRiverThread>();
-            Array.ForEach(thread_lists.Keys.ToArray(), key =>
+            _group_task = Task.WhenAll(
+             thread_lists.Keys.Select(key => Task.Run(() =>
             {
                 var threeriver_thread = new ThreeRiverThread(key, cookie);
-                bag.Add(threeriver_thread);
+                _threeRiverThreads.Enqueue(new KeyValuePair<DateTime, ThreeRiverThread>(threeriver_thread.CreateTime, threeriver_thread));
             }
-            );
-            foreach (var thread in bag)
+           )));
+        }
+
+        public IEnumerator<KeyValuePair<DateTime, ThreeRiverThread>> GetEnumerator()
+        {
+            while (_group_task == null)
+                ;
+            while (!_group_task.IsCompleted)
             {
-                _threeRiverThreads.Add(thread.CreateTime, thread);
+                if (_threeRiverThreads.TryDequeue(out var result))
+                    yield return result;
+                else
+                    System.Threading.Thread.Sleep(100);
             }
+            while (_threeRiverThreads.TryDequeue(out var result))
+                yield return result;
+        }
+
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return GetEnumerator();
         }
     }
 }

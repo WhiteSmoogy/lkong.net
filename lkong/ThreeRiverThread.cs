@@ -55,7 +55,7 @@ namespace lkong.bookrecommandread
 
         void ParseTable(HtmlNode table)
         {
-            var trs = table.SelectNodes("tr");
+            var trs = table.SelectNodes("tr") ?? table.SelectNodes("tbody/tr");
             foreach (var tr in trs.Skip(1))
             {
                 var cols = tr.SelectNodes("td");
@@ -69,12 +69,15 @@ namespace lkong.bookrecommandread
 
                 //parse楼层
                 var floors = cols[2].SelectNodes(".//a");
-                foreach (var floor in floors)
+                IEnumerable<string> floor_indices = floors?.Select(floor => floor.InnerText) ??
+                    Regex.Matches(cols[2].InnerText, @"\d*#").Select(match => match.Value);//没有编辑跳转链接
+
+                foreach (var index_str in floor_indices)
                 {
-                    var floor_index = int.Parse(floor.InnerText.Replace("#", "")) - 1;
+                    var floor_index = int.Parse(index_str.Replace("#", "")) - 1;
                     var three_floor = new ThreeRiverFloor(this[floor_index]);
                     var content = three_floor.Value.InnerText;
-                    content = FilterContent(content,bookname, three_floor);
+                    content = FilterContent(content, bookname, three_floor);
                     three_floor.Content = content;
                     _three_floors[bookname].Add(three_floor);
                 }
